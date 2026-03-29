@@ -1,0 +1,45 @@
+# Parameters
+nc: 80 # number of classes
+end2end: True # YOLO26 核心：端到端模式
+reg_max: 1 # YOLO26 核心：剥离 DFL
+scales: # 使用 YOLO26 的动态缩放系数，兼容你的 Mamba 参数
+  # [depth, width, max_channels]
+  n: [0.50, 0.25, 1024]
+  s: [0.50, 0.50, 1024]
+  m: [0.50, 1.00, 512]
+  l: [1.00, 1.00, 512]
+  x: [1.00, 1.50, 512]
+
+# Mamba-YOLO26 backbone
+backbone:
+  # [from, repeats, module, args]
+  - [-1, 1, SimpleStem, [128, 3]]       # 0-P2/4 (来自 Mamba-YOLO: 更好的初始特征提取)
+  - [-1, 2, VSSBlock, [128]]            # 1: 替代 C3k2
+  - [-1, 1, VisionClueMerge, [256]]     # 2-P3/8 (来自 Mamba-YOLO: 替代 Conv 下采样)
+  - [-1, 2, VSSBlock, [256]]            # 3
+  - [-1, 1, VisionClueMerge, [512]]     # 4-P4/16 (来自 Mamba-YOLO)
+  - [-1, 2, VSSBlock, [512]]            # 5
+  - [-1, 1, VisionClueMerge, [1024]]    # 6-P5/32 (来自 Mamba-YOLO)
+  - [-1, 2, VSSBlock, [1024]]           # 7
+  - [-1, 1, SPPF, [1024, 5, 3, True]]   # 8 (来自 YOLO26)
+  - [-1, 2, C2PSA, [1024]]              # 9 (来自 YOLO26: 深层自注意力提纯)
+
+# Mamba-YOLO26 head
+head:
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
+  - [[-1, 5], 1, Concat, [1]]           # 11: cat backbone P4 (指向第 5 层)
+  - [-1, 2, XSSBlock, [512]]            # 12: (来自 Mamba-YOLO)
+
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
+  - [[-1, 3], 1, Concat, [1]]           # 14: cat backbone P3 (指向第 3 层)
+  - [-1, 2, XSSBlock, [256]]            # 15: P3/8-small (来自 Mamba-YOLO)
+
+  - [-1, 1, Conv, [256, 3, 2]]          # 16: Neck 底部下采样
+  - [[-1, 12], 1, Concat, [1]]          # 17: cat head P4 (指向第 12 层)
+  - [-1, 2, XSSBlock, [512]]            # 18: P4/16-medium (来自 Mamba-YOLO)
+
+  - [-1, 1, Conv, [512, 3, 2]]          # 19: Neck 底部下采样
+  - [[-1, 9], 1, Concat, [1]]           # 20: cat head P5 (指向第 9 层的 C2PSA)
+  - [-1, 1, XSSBlock, [1024]]           # 21: P5/32-large (来自 Mamba-YOLO)
+
+  - [[15, 18, 21], 1, Detect, [nc]]     # 22: YOLO26 自动识别端到端参数
