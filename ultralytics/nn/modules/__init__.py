@@ -106,7 +106,7 @@ from .transformer import (
     TransformerLayer,
 )
 
-from .mamba_yolo import SimpleStem, VisionClueMerge, VSSBlock, XSSBlock
+from .mamba_yolo import SimpleStem, VisionClueMerge, VSSBlock, XSSBlock,MambaMoEBlock,MoE_C3k2
 __all__ = (
     "AIFI",
     "C1",
@@ -188,5 +188,5 @@ __all__ = (
     "YOLOESegment",
     "YOLOESegment26",
     "v10Detect",
-    "SimpleStem", "VisionClueMerge", "VSSBlock", "XSSBlock",
+    "SimpleStem", "VisionClueMerge", "VSSBlock", "XSSBlock","MambaMoEBlock","MoE_C3k2"
 )

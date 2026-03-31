@@ -8,21 +8,25 @@ ROOT = os.path.abspath('.') + "/"
 def parse_opt():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data', type=str, default='/root/autodl-tmp/coco4/data.yaml', help='dataset.yaml path')
-    parser.add_argument('--config', type=str, default='/root/mamba-yolo26/ultralytics/cfg/models/mamba/mamba1_yolo26.yaml', help='model path(s)')
-    parser.add_argument('--batch_size', type=int, default=16, help='batch size')
+    parser.add_argument('--config', type=str, default='/root/mamba-yolo26/ultralytics/cfg/models/mamba/mamba1_yolo26m.yaml', help='model path(s)')
+    parser.add_argument('--batch_size', type=int, default=8, help='batch size')
     parser.add_argument('--imgsz', '--img', '--img-size', type=int, default=640, help='inference size (pixels)')
     parser.add_argument('--task', default='train', help='train, val, test, speed or study')
     parser.add_argument('--device', default='0', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
     parser.add_argument('--workers', type=int, default=8, help='max dataloader workers (per RANK in DDP mode)')
-    parser.add_argument('--epochs', type=int, default=500)
-    parser.add_argument('--optimizer', default='SGD', help='SGD, Adam, AdamW')
+    parser.add_argument('--epochs', type=int, default=200)
+    parser.add_argument('--optimizer', default='auto', help='SGD, Adam, AdamW')
     parser.add_argument('--amp', default=False, help='open amp')
     parser.add_argument('--project', default='/root/mamba-yolo26/out_dir/yolo26', help='save to project/name')
     parser.add_argument('--name', default='yolo-mamba', help='save to project/name')
     parser.add_argument('--half', action='store_true', help='use FP16 half-precision inference')
     parser.add_argument('--dnn', action='store_true', help='use OpenCV DNN for ONNX inference')
-    parser.add_argument('--lr0', type=float, default=0.01, help='initial learning rate (i.e. SGD=1E-2, Adam=1E-3)')
-    parser.add_argument('--cos_lr', type=bool, default=False, help='use cosine lr schedule')
+    parser.add_argument('--lr0', type=float, default=0.001, help='initial learning rate (i.e. SGD=1E-2, Adam=1E-3)')
+    parser.add_argument('--cos_lr', type=bool, default=True, help='use cosine lr schedule')
+    parser.add_argument('--warmup_epochs', type=int, default=5, help='use warmup_epochs')
+    parser.add_argument('--close_mosaic', type=int, default=5, help='use close_mosaic')
+    
+
 
     opt = parser.parse_args()
     return opt
@@ -43,7 +47,9 @@ if __name__ == '__main__':
         "name": opt.name,
         'imgsz':opt.imgsz,
         'lr0':opt.lr0,
-        'cos_lr':opt.cos_lr
+        'cos_lr':opt.cos_lr,
+        'close_mosaic' :opt.close_mosaic,
+        'warmup_epochs':opt.warmup_epochs
     }
     model_conf = opt.config
     if task == "train":
