@@ -1,0 +1,212 @@
+{
+    "classes": [
+        {
+            "title": "alligator crack",
+            "shape": "polygon",
+            "color": "#B2DF8A",
+            "geometry_config": {},
+            "id": 6510463,
+            "hotkey": ""
+        },
+        {
+            "title": "bearing",
+            "shape": "polygon",
+            "color": "#8B4513",
+            "geometry_config": {},
+            "id": 6510470,
+            "hotkey": ""
+        },
+        {
+            "title": "cavity",
+            "shape": "polygon",
+            "color": "#00FF80",
+            "geometry_config": {},
+            "id": 6510460,
+            "hotkey": ""
+        },
+        {
+            "title": "crack",
+            "shape": "polygon",
+            "color": "#FFC0CB",
+            "geometry_config": {},
+            "id": 6510473,
+            "hotkey": ""
+        },
+        {
+            "title": "drainage",
+            "shape": "polygon",
+            "color": "#8B0000",
+            "geometry_config": {},
+            "id": 6510461,
+            "hotkey": ""
+        },
+        {
+            "title": "efflorescence",
+            "shape": "polygon",
+            "color": "#0000FF",
+            "geometry_config": {},
+            "id": 6510462,
+            "hotkey": ""
+        },
+        {
+            "title": "expansion joint",
+            "shape": "polygon",
+            "color": "#A9A9A9",
+            "geometry_config": {},
+            "id": 6510471,
+            "hotkey": ""
+        },
+        {
+            "title": "exposed rebars",
+            "shape": "polygon",
+            "color": "#CF3476",
+            "geometry_config": {},
+            "id": 6510469,
+            "hotkey": ""
+        },
+        {
+            "title": "graffiti",
+            "shape": "polygon",
+            "color": "#FF8C00",
+            "geometry_config": {},
+            "id": 6510466,
+            "hotkey": ""
+        },
+        {
+            "title": "hollowareas",
+            "shape": "polygon",
+            "color": "#F67C68",
+            "geometry_config": {},
+            "id": 6510472,
+            "hotkey": ""
+        },
+        {
+            "title": "joint tape",
+            "shape": "polygon",
+            "color": "#800080",
+            "geometry_config": {},
+            "id": 6510464,
+            "hotkey": ""
+        },
+        {
+            "title": "protective equipment",
+            "shape": "polygon",
+            "color": "#808000",
+            "geometry_config": {},
+            "id": 6510458,
+            "hotkey": ""
+        },
+        {
+            "title": "restformwork",
+            "shape": "polygon",
+            "color": "#D4AFA2",
+            "geometry_config": {},
+            "id": 6510467,
+            "hotkey": ""
+        },
+        {
+            "title": "rockpocket",
+            "shape": "polygon",
+            "color": "#FDBF6F",
+            "geometry_config": {},
+            "id": 6510475,
+            "hotkey": ""
+        },
+        {
+            "title": "rust",
+            "shape": "polygon",
+            "color": "#FF0000",
+            "geometry_config": {},
+            "id": 6510459,
+            "hotkey": ""
+        },
+        {
+            "title": "spalling",
+            "shape": "polygon",
+            "color": "#7BD3F7",
+            "geometry_config": {},
+            "id": 6510465,
+            "hotkey": ""
+        },
+        {
+            "title": "washouts/concrete corrosion",
+            "shape": "polygon",
+            "color": "#00008B",
+            "geometry_config": {},
+            "id": 6510474,
+            "hotkey": ""
+        },
+        {
+            "title": "weathering",
+            "shape": "polygon",
+            "color": "#008000",
+            "geometry_config": {},
+            "id": 6510457,
+            "hotkey": ""
+        },
+        {
+            "title": "wetspot",
+            "shape": "polygon",
+            "color": "#008B8B",
+            "geometry_config": {},
+            "id": 6510468,
+            "hotkey": ""
+        }
+    ],
+    "tags": [
+        {
+            "name": "concrete defect",
+            "value_type": "none",
+            "color": "#458A0F",
+            "id": 28880,
+            "hotkey": "",
+            "applicable_type": "all",
+            "classes": []
+        },
+        {
+            "name": "general defect",
+            "value_type": "none",
+            "color": "#0F548A",
+            "id": 28879,
+            "hotkey": "",
+            "applicable_type": "all",
+            "classes": []
+        },
+        {
+            "name": "object part",
+            "value_type": "none",
+            "color": "#588A0F",
+            "id": 28881,
+            "hotkey": "",
+            "applicable_type": "all",
+            "classes": []
+        },
+        {
+            "name": "test challenge",
+            "value_type": "none",
+            "color": "#2F8A0F",
+            "id": 28878,
+            "hotkey": "",
+            "applicable_type": "all",
+            "classes": []
+        },
+        {
+            "name": "test dev",
+            "value_type": "none",
+            "color": "#8A6E0F",
+            "id": 28877,
+            "hotkey": "",
+            "applicable_type": "all",
+            "classes": []
+        }
+    ],
+    "projectType": "images",
+    "projectSettings": {
+        "multiView": {
+            "enabled": false,
+            "tagName": null,
+            "tagId": null,
+            "isSynced": false
+        }
+    }
+}

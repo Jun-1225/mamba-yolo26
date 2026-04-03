@@ -78,6 +78,7 @@ from ultralytics.nn.modules import (
     XSSBlock,
     MambaMoEBlock,
     MoE_C3k2,
+    ES_MOE,
 )
 from ultralytics.utils import DEFAULT_CFG_DICT, LOGGER, WINDOWS, YAML, colorstr, emojis
 from ultralytics.utils.checks import check_requirements, check_suffix, check_yaml
@@ -1615,7 +1616,7 @@ def parse_model(d, ch, verbose=True):
             SCDown,
             C2fCIB,
             A2C2f,
-            SimpleStem, VisionClueMerge, VSSBlock, XSSBlock,MambaMoEBlock,MoE_C3k2
+            SimpleStem, VisionClueMerge, VSSBlock, XSSBlock,MambaMoEBlock,MoE_C3k2,ES_MOE
         }
     )
     repeat_modules = frozenset(  # modules with 'repeat' arguments
