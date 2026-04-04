@@ -191,7 +191,6 @@ calibration_*.npy
 *.webm
 *.jpg
 *.jpeg
-*.png
 *.bmp
 *.tiff
 *.gif
