@@ -20,9 +20,37 @@
 
 ## 环境要求
 
-- Python **≥ 3.8**（推荐 3.10+）
-- 训练/推理：PyTorch（CUDA 按本机安装）
-- Web 服务：`pip install -r bridge_inspection/requirements.txt`（会 **editable 安装本仓库根目录的 `ultralytics`**）
+### 作者当前开发与验证环境（实测）
+
+以下为本仓库在 **Linux x86_64** 上实际跑通训练 / Web / ONNX GPU 推理时的环境快照，便于他人对齐或排查差异。
+
+| 项 | 版本或配置 |
+|----|------------|
+| **操作系统** | Linux（内核 5.15.x），`x86_64` |
+| **Python** | **3.12.3** |
+| **PyTorch** | **2.3.0+cu121**（CUDA **12.1** 官方预编译轮子） |
+| **torchvision** | **0.18.0+cu121** |
+| **NumPy** | **1.26.4**（与 `bridge_inspection/requirements.txt` 中 `<2` 约束一致） |
+| **OpenCV** | **4.11.0**（`opencv-python` / headless，以你当前 venv 为准） |
+| **FastAPI** | **0.135.3** |
+| **ONNX Runtime** | **1.24.4**，可用执行提供器：`CUDAExecutionProvider`、`TensorrtExecutionProvider`、`CPUExecutionProvider` |
+| **NVIDIA 驱动** | **580.105.08** |
+| **GPU** | **NVIDIA GeForce RTX 4090**（24 GB 显存） |
+
+安装与当前 PyTorch 栈接近的 CUDA 12.1 版本可参考（请按 [PyTorch 官网](https://pytorch.org/get-started/locally/) 更新索引 URL）：
+
+```bash
+pip install torch==2.3.0 torchvision==0.18.0 --index-url https://download.pytorch.org/whl/cu121
+```
+
+ONNX GPU 侧需 **CUDA 12 + cuDNN 9** 与 `onnxruntime-gpu` 匹配；本环境使用 ORT 1.24.x 时已能加载 `CUDAExecutionProvider`。若本机缺库，可用 `bridge_inspection/run_uvicorn_gpu.sh` 补全 `LD_LIBRARY_PATH`。
+
+### 一般兼容说明（非必须与本表完全一致）
+
+- **Python**：`pyproject.toml` 声明 **`>=3.8`**；上游 Ultralytics 亦支持 3.8–3.12。**Web 子项目**在作者环境下以 **3.12** 验证。
+- **训练 / 推理**：需 **PyTorch** 与 **torchvision**（版本组合建议与官方文档或上表同一代 CUDA 对齐）。
+- **桥梁 Web**：在 `bridge_inspection/` 下执行 **`pip install -r requirements.txt`**，会对仓库根目录执行 **editable 安装 `ultralytics`（`-e ..`）**。
+- **NumPy**：Web 依赖文件将 NumPy 限制在 **1.x**（如 `>=1.26.4,<2`），避免与部分 OpenCV / 检测后处理组合冲突。
 
 ---
 
