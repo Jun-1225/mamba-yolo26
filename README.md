@@ -6,6 +6,13 @@
 
 ---
 
+## 界面预览
+
+
+![桥梁病害智能巡检 - Web 界面预览](docs/preview.png)
+
+---
+
 ## 功能概览
 
 | 模块 | 说明 |
@@ -26,15 +33,13 @@
 
 | 项 | 版本或配置 |
 |----|------------|
-| **操作系统** | Linux（内核 5.15.x），`x86_64` |
 | **Python** | **3.12.3** |
-| **PyTorch** | **2.3.0+cu121**（CUDA **12.1** 官方预编译轮子） |
+| **PyTorch** | **2.3.0+cu121** |
 | **torchvision** | **0.18.0+cu121** |
-| **NumPy** | **1.26.4**（与 `bridge_inspection/requirements.txt` 中 `<2` 约束一致） |
-| **OpenCV** | **4.11.0**（`opencv-python` / headless，以你当前 venv 为准） |
+| **NumPy** | **1.26.4**|
+| **OpenCV** | **4.11.0**（`opencv-python` ） |
 | **FastAPI** | **0.135.3** |
 | **ONNX Runtime** | **1.24.4**，可用执行提供器：`CUDAExecutionProvider`、`TensorrtExecutionProvider`、`CPUExecutionProvider` |
-| **NVIDIA 驱动** | **580.105.08** |
 | **GPU** | **NVIDIA GeForce RTX 4090**（24 GB 显存） |
 
 安装与当前 PyTorch 栈接近的 CUDA 12.1 版本可参考（请按 [PyTorch 官网](https://pytorch.org/get-started/locally/) 更新索引 URL）：
