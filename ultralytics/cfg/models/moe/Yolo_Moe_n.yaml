@@ -31,6 +31,7 @@ backbone:
   - [-1, 1, ES_MOE, [1024]]         # 14 - <- P5 最终特征，传给 Head
 
 # YOLO26n head (索引已修正)
+
 head:
   - [-1, 1, nn.Upsample, [None, 2, "nearest"]] # 15
   - [[-1, 9], 1, Concat, [1]]       # 16 - cat backbone P4 (第9层)

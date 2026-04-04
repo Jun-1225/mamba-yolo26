@@ -1,5 +1,5 @@
 # 数据集根目录路径 (根据你本地存放 yolo_bridge_dataset 的位置修改)
-path: /root/autodl-tmp/dacl10k
+path: /root/autodl-tmp/dacl10k2
 
 # 训练和验证集的相对路径 (脚本已自动生成对应目录) [cite: 42, 71]
 train: images/train  # 训练集图像路径
@@ -9,20 +9,14 @@ val: images/val      # 验证集图像路径
 # 类别定义：严格对应转换脚本中的 CLASS_MAP 顺序 
 names:
   0: alligator crack
-  1: bearing
-  2: cavity
-  3: crack
-  4: drainage
-  5: efflorescence
-  7: exposed rebars
-  8: graffiti
-  9: hollowareas
-  10: joint tape
-  11: protective equipment
-  12: restformwork
-  13: rockpocket
-  14: rust
-  15: spalling
-  16: washouts/concrete corrosion
-  17: weathering
-  18: wetspot
+  1: cavity
+  2: crack
+  3: efflorescence
+  4: exposed rebars
+  5: hollowareas
+  6: rockpocket
+  7: rust
+  8: spalling
+  9: washouts/concrete corrosion
+  10: weathering
+  11: wetspot

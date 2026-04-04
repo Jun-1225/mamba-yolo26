@@ -24,6 +24,7 @@ __all__ = (
     "LightConv",
     "RepConv",
     "SpatialAttention",
+    "DWTDown"
 )
 
 
@@ -35,6 +36,27 @@ def autopad(k, p=None, d=1):  # kernel, padding, dilation
         p = k // 2 if isinstance(k, int) else [x // 2 for x in k]  # auto-pad
     return p
 
+
+class DWTDown(nn.Module):
+    def __init__(self, c1, c2):
+        super().__init__()
+        # Haar小波会将通道数放大4倍，因此需要一个 1x1 卷积来降维并融合特征
+        self.conv = nn.Conv2d(c1 * 4, c2, kernel_size=1, stride=1, bias=False)
+        self.bn = nn.BatchNorm2d(c2)
+        self.act = nn.SiLU()
+        self.conv_block=Conv(c1, c2, k=3, s=2, act=False)
+
+    def forward(self, x):
+        res=self.conv_block(x)
+        # 离散小波变换(Haar)的物理等价操作
+
+        x0 = x[:, :, 0::2, 0::2]
+        x1 = x[:, :, 1::2, 0::2]
+        x2 = x[:, :, 0::2, 1::2]
+        x3 = x[:, :, 1::2, 1::2]
+        # 在通道维度拼接 (B, C*4, H/2, W/2)
+        x = torch.cat([x0, x1, x2, x3], dim=1) 
+        return self.act(self.bn(self.conv(x)))+res
 
 class Conv(nn.Module):
     """Standard convolution module with batch normalization and activation.

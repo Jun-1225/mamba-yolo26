@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>桥梁病害智能巡检系统 · 控制台</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/style.css" />
+    <script>
+      try {
+        if (localStorage.getItem("bridge_theme_v1") === "light") document.documentElement.setAttribute("data-theme", "light");
+      } catch (e) {
+        /* ignore */
+      }
+    </script>
+  </head>
+  <body>
+    <div class="app-bg" aria-hidden="true">
+      <div class="grid-floor"></div>
+      <div class="grid-glow"></div>
+      <div class="data-stream data-stream--tl"></div>
+      <div class="data-stream data-stream--br"></div>
+      <div class="corner-hud corner-hud--tl"></div>
+      <div class="corner-hud corner-hud--tr"></div>
+      <div class="corner-hud corner-hud--bl"></div>
+      <div class="corner-hud corner-hud--br"></div>
+    </div>
+
+    <header class="app-header glass-header">
+      <div class="header-brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <h1>桥梁病害智能巡检系统</h1>
+        <span class="header-tag">LAB · ONNX</span>
+      </div>
+      <div class="header-meta">
+        <button type="button" class="theme-toggle" id="themeToggle" aria-pressed="false" title="切换浅色/深色界面">
+          <span class="theme-toggle__swatch" aria-hidden="true"></span>
+          <span id="themeToggleLabel">浅色</span>
+        </button>
+        <span class="header-divider"></span>
+        <span class="mono-digits" id="clock"></span>
+        <span class="header-divider"></span>
+        <span>无人机巡检 · 神经分割链路</span>
+        <span id="modelStatus" class="status-pill">检查模型…</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar glass-sidebar">
+        <div class="sidebar-head">工作分区</div>
+        <div class="nav-item active" data-nav data-nav-section="detect">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M4 6h16M4 12h10M4 18h16" />
+              <circle cx="18" cy="12" r="3" class="nav-glow-dot" />
+            </svg>
+          </span>
+          <span>实时检测</span>
+        </div>
+        <div class="nav-item" data-nav data-nav-section="viz">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M4 19V5M4 19h16M8 15v4M12 11v8M16 7v12M20 3v16" />
+            </svg>
+          </span>
+          <span>数据可视化</span>
+        </div>
+        <div class="nav-item" data-nav data-nav-section="risk">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 9v4M12 17h.01M10.3 3.3L2 21h20L13.7 3.3a1 1 0 00-1.4 0z" />
+            </svg>
+          </span>
+          <span>风险预警</span>
+        </div>
+        <div class="nav-item" data-nav data-nav-section="assess">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 3l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V7l8-4z" />
+            </svg>
+          </span>
+          <span>桥梁评估</span>
+        </div>
+      </aside>
+
+      <div class="main-wrap">
+        <div class="center-col nav-scroll-target" id="section-detect">
+          <div class="toolbar glass-panel">
+            <div class="toolbar-actions">
+              <button type="button" class="ctrl-switch ctrl-switch--cyan" id="btnPickImg" title="上传图像">
+                <span class="ctrl-switch__led"></span>
+                <span class="ctrl-switch__label">图像链路</span>
+              </button>
+              <button type="button" class="ctrl-switch ctrl-switch--magenta" id="btnPickVid" title="上传视频">
+                <span class="ctrl-switch__led"></span>
+                <span class="ctrl-switch__label">视频链路</span>
+              </button>
+            </div>
+            <input type="file" id="fileImage" class="hidden-input" accept="image/*" />
+            <input type="file" id="fileVideo" class="hidden-input" accept="video/*" />
+
+            <div class="instrument" title="检测置信度阈值">
+              <label class="instrument-label" for="confRange">置信度</label>
+              <div class="instrument-track">
+                <input type="range" id="confRange" min="5" max="100" step="5" value="25" />
+                <div class="instrument-ticks" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+              </div>
+              <input type="hidden" id="conf" value="0.25" />
+              <span class="instrument-readout mono-digits" id="confReadout">0.25</span>
+            </div>
+
+            <div class="instrument" title="NMS IoU">
+              <label class="instrument-label" for="iouRange">IoU</label>
+              <div class="instrument-track">
+                <input type="range" id="iouRange" min="10" max="100" step="5" value="70" />
+                <div class="instrument-ticks" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+              </div>
+              <input type="hidden" id="iou" value="0.7" />
+              <span class="instrument-readout mono-digits" id="iouReadout">0.70</span>
+            </div>
+
+            <div class="instrument instrument--compact" title="像元尺度标定系数 ρ（mm/px）">
+              <label class="instrument-label" for="mmPx">ρ mm/px</label>
+              <input type="number" id="mmPx" value="0.5" step="0.01" min="0.001" class="instrument-input mono-digits" />
+            </div>
+
+            <div class="instrument instrument--compact" title="视频采样帧数">
+              <label class="instrument-label" for="maxFrames">采样帧</label>
+              <input type="number" id="maxFrames" value="24" min="4" max="120" class="instrument-input mono-digits" />
+            </div>
+          </div>
+
+          <div class="timing-bar glass-panel timing-bar--neon" id="timingBar">
+            推理耗时：等待上传 · 核心推理(ms)与预处理/后处理来自 Ultralytics；服务端总计含绘图与尺寸估算
+          </div>
+
+          <div class="viewport-outer glass-frame" id="viewport">
+            <div class="viewport-placeholder">
+              <p class="vp-title">等待数据注入</p>
+              <p>请上传无人机照片或视频</p>
+              <p class="vp-hint">
+                左侧视轨 · <strong class="accent-cyan">分割掩膜</strong> — 右侧视轨 ·
+                <strong class="accent-magenta">检测框与置信度</strong>
+              </p>
+            </div>
+          </div>
+
+          <div class="thumbs glass-panel" id="thumbs"></div>
+
+          <div class="panel glass-panel">
+            <div class="panel-title panel-title--neon">
+              <span class="panel-title-mark"></span>
+              病害实例明细：分割+检测模型下 A 为<strong>掩膜前景像素计数</strong>（masks.data，与框同序），其次多边形填充/检测框；Sm=ρ²·A×α（ρ
+              为 mm/px，α 待定）；L、W 由多边形内几何估算
+            </div>
+            <div class="table-wrap">
+              <table class="data data--neon">
+                <thead>
+                  <tr>
+                    <th>类型</th>
+                    <th>置信度</th>
+                    <th>L (mm)</th>
+                    <th>W (mm)</th>
+                    <th>A (px)</th>
+                    <th title="由像元面积 A 与 ρ 得 ρ²·A，再乘待定系数 α（mm²）">Sm (mm²)</th>
+                    <th>ID</th>
+                  </tr>
+                </thead>
+                <tbody id="detTableBody">
+                  <tr>
+                    <td colspan="7" class="table-empty">等待上传</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="side-stats">
+          <div class="panel glass-panel stats-dashboard">
+            <div class="panel-title panel-title--neon"><span class="panel-title-mark"></span>识别统计</div>
+            <div class="stats-grid">
+              <div class="stat-card stat-card--cyan">
+                <div class="stat-card__ring" aria-hidden="true"></div>
+                <div class="num mono-digits" id="statTotal">0</div>
+                <div class="lbl">检出实例</div>
+              </div>
+              <div class="stat-card stat-card--gold">
+                <div class="stat-card__ring" aria-hidden="true"></div>
+                <div class="num mono-digits" id="statHigh">0</div>
+                <div class="lbl">高置信 (≥60%)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel glass-panel nav-scroll-target" id="section-risk">
+            <div class="panel-title panel-title--neon"><span class="panel-title-mark"></span>风险预警清单</div>
+            <div id="riskPanelBody" class="risk-panel-body">
+              <p class="risk-placeholder">完成推理后，在此列出高置信（≥60%）实例，便于优先复核。</p>
+            </div>
+          </div>
+
+          <div class="nav-scroll-target" id="section-viz">
+          <div class="panel glass-panel">
+            <div class="panel-title panel-title--neon"><span class="panel-title-mark"></span>病害类型分布</div>
+            <div id="donutText" class="donut-placeholder">等待推理</div>
+          </div>
+
+          <div class="panel glass-panel">
+            <div class="panel-title panel-title--neon"><span class="panel-title-mark"></span>结构健康指数</div>
+            <div class="health-holo">
+              <div class="health-panel-inner">
+                <div class="health-gauge-wrap" id="healthGaugeWrap">
+                  <svg class="health-gauge-svg" viewBox="0 0 120 120" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="healthGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#00f5ff" />
+                        <stop offset="55%" stop-color="#ff2bd6" />
+                        <stop offset="100%" stop-color="#ffd60a" />
+                      </linearGradient>
+                      <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="2" result="b" />
+                        <feMerge>
+                          <feMergeNode in="b" />
+                          <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                      </filter>
+                    </defs>
+                    <circle class="health-gauge-bg" cx="60" cy="60" r="52" fill="none" />
+                    <circle class="health-gauge-arc" id="healthGaugeArc" cx="60" cy="60" r="52" fill="none" pathLength="100" />
+                  </svg>
+                  <div class="health-gauge-center">
+                    <div class="score mono-digits" id="healthScore">—</div>
+                    <div class="health-score-hint">分 · 示意</div>
+                  </div>
+                </div>
+                <div class="health-copy">
+                  <div class="health-copy__label">等级释义</div>
+                  <span class="severity-pill health-tier-pill" id="healthTier">未评定</span>
+                  <p class="health-meaning" id="healthSub">
+                    完成推理后：分数为 0–100 的示意指数（越高表示算法视角下表观状况越好），非规范桥梁评定。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel glass-panel">
+            <div class="panel-title panel-title--neon"><span class="panel-title-mark"></span>量测与性能</div>
+            <div class="env-row" title="当前列表中所有检出框置信度算术平均">
+              <span>平均置信度</span><span class="mono-digits" id="statMeanConf">—</span>
+            </div>
+            <div class="env-row" title="当前结果中出现的病害类别种数（按类名去重）">
+              <span>病害类别数</span><span class="mono-digits" id="statClassKinds">—</span>
+            </div>
+            <div class="env-row" title="最近一次推理使用的像元标定 ρ（mm/px），来自服务端回传">
+              <span>标定 ρ</span><span class="mono-digits" id="statRhoDisplay">—</span>
+            </div>
+            <div class="env-row" title="当前帧/最近一次图像推理的 Ultralytics 核心推理耗时">
+              <span>核心推理</span><span class="mono-digits" id="statInferCore">—</span>
+            </div>
+          </div>
+          </div>
+        </div>
+
+        <div class="agent-column nav-scroll-target" id="section-assess">
+          <section class="report-briefing glass-panel" id="reportBriefing">
+            <div class="briefing-bar">
+              <button type="button" class="briefing-toggle" id="briefingToggle" aria-expanded="true" aria-controls="briefingBody">
+                <span class="briefing-toggle__mark"></span>
+                <span class="briefing-toggle__text">初筛概览</span>
+                <span class="briefing-toggle__chevron" aria-hidden="true">▼</span>
+              </button>
+              <p class="briefing-one-liner" id="briefingOneLiner"></p>
+            </div>
+            <div class="briefing-body" id="briefingBody">
+              <div class="brief-block">
+                <span class="brief-k">结论</span>
+                <p class="brief-v" id="briefConclusion">等待上传并完成推理后，将在此生成初筛结论文案。</p>
+              </div>
+              <div class="brief-block brief-block--sev">
+                <span class="brief-k">严重等级</span>
+                <span class="severity-pill" id="briefSeverity">—</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="chat-copilot glass-panel">
+            <header class="chat-copilot__header">
+              <span class="expert-led expert-led--idle" id="aiExpertLed" title="待命" role="status"></span>
+              <div class="chat-copilot__headtext">
+                <h2 class="chat-copilot__title">桥梁病害分析专家</h2>
+                <p class="chat-copilot__sub">Copilot · 双向交互信道</p>
+              </div>
+            </header>
+
+            <div class="chat-stream" id="chatMessages" role="log" aria-relevant="additions" aria-label="专家对话"></div>
+
+            <div class="chat-bridge-ctx">
+              <input
+                type="text"
+                id="agentCtx"
+                class="chat-bridge-input"
+                placeholder="桥梁背景（可选）：类型、跨径、材质、交通等级…"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="action-chips" id="actionChips">
+              <button type="button" class="action-chip" data-chip="repair" title="向模型追问更具体的修复与养护建议">📝 追问修复建议</button>
+              <button type="button" class="action-chip" data-chip="risk" title="基于当前检出做风险解读">⚠️ 评估结构风险</button>
+              <button type="button" class="action-chip" data-chip="export" title="导出为 Markdown 文本">📊 导出当前对话分析</button>
+            </div>
+
+            <div class="chat-composer">
+              <label class="visually-hidden" for="chatInput">输入追问或指令</label>
+              <textarea
+                id="chatInput"
+                class="chat-input"
+                rows="2"
+                placeholder="输入追问或分析指令 — Enter 发送，Shift+Enter 换行"
+              ></textarea>
+              <button type="button" class="btn-send-chat" id="btnSendChat">发送</button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function tick() {
+        const el = document.getElementById("clock");
+        if (el) el.textContent = new Date().toLocaleString("zh-CN");
+      }
+      tick();
+      setInterval(tick, 1000);
+      (function wireThemeToggle() {
+        var btn = document.getElementById("themeToggle");
+        var label = document.getElementById("themeToggleLabel");
+        var k = "bridge_theme_v1";
+        function isLight() {
+          return document.documentElement.getAttribute("data-theme") === "light";
+        }
+        function sync() {
+          var light = isLight();
+          if (label) label.textContent = light ? "深色" : "浅色";
+          if (btn) btn.setAttribute("aria-pressed", light ? "true" : "false");
+        }
+        sync();
+        if (btn)
+          btn.addEventListener("click", function () {
+            if (isLight()) {
+              document.documentElement.removeAttribute("data-theme");
+              try {
+                localStorage.setItem(k, "dark");
+              } catch (e) {
+                /* ignore */
+              }
+            } else {
+              document.documentElement.setAttribute("data-theme", "light");
+              try {
+                localStorage.setItem(k, "light");
+              } catch (e) {
+                /* ignore */
+              }
+            }
+            sync();
+          });
+      })();
+    </script>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

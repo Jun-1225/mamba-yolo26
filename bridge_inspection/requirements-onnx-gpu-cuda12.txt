@@ -1,0 +1,27 @@
+# ---------- CUDA 12 + cuDNN 9 路线（与官方 PyPI 默认 onnxruntime-gpu>=1.19 一致）----------
+#
+# 若 pip 使用阿里云等镜像，可能错误装上「CUDA 11 链接」的 onnxruntime-gpu（ldd 会出现 libcublasLt.so.11）。
+# 请先用官方源重装 GPU 包，再装下面 NVIDIA 运行时 wheel：
+#
+#   pip uninstall -y onnxruntime onnxruntime-gpu
+#   pip install "onnxruntime-gpu>=1.19" -i https://pypi.org/simple
+#
+# （若本机 pip 默认镜像覆盖主索引，可临时：pip config unset global.index-url）
+#
+#   pip install -r requirements-onnx-gpu-cuda12.txt
+#
+# 本文件不列出 onnxruntime-gpu，避免你执行 -r 时又走默认镜像装回 cu11 轮子。
+#
+# 启动请用 ./run_uvicorn_gpu.sh（会把 site-packages 下 nvidia/*/lib 加入 LD_LIBRARY_PATH）。
+# 系统已装 CUDA 12.1 Toolkit 时，也可把 /usr/local/cuda/lib64 加入 LD_LIBRARY_PATH。
+#
+# 验证：
+#   python -c "import onnxruntime as ort; print(ort.__version__, ort.get_available_providers())"
+#   ldd "$(python -c "import onnxruntime as o,os; print(os.path.join(os.path.dirname(o.__file__),'capi/libonnxruntime_providers_cuda.so'))")" | egrep 'cublasLt|cudnn|not found'
+# 期望：libcublasLt.so.12、libcudnn.so.9 等已解析，无 not found。
+
+nvidia-cudnn-cu12
+nvidia-cublas-cu12
+nvidia-cuda-runtime-cu12
+nvidia-cufft-cu12
+nvidia-curand-cu12

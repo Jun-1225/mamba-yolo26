@@ -4,12 +4,19 @@ from pathlib import Path
 from tqdm import tqdm
 
 # 根据你提供的 meta.json 自动整理的 19 个类别映射
+'''
 CLASS_MAP = {
     "alligator crack": 0, "bearing": 1, "cavity": 2, "crack": 3, "drainage": 4,
     "efflorescence": 5, "expansion joint": 6, "exposed rebars": 7, "graffiti": 8,
     "hollowareas": 9, "joint tape": 10, "protective equipment": 11, "restformwork": 12,
     "rockpocket": 13, "rust": 14, "spalling": 15, "washouts/concrete corrosion": 16,
     "weathering": 17, "wetspot": 18
+}
+'''
+CLASS_MAP = {
+    "alligator crack": 0,  "cavity": 1, "crack": 2,"efflorescence": 3,  "exposed rebars": 4, 
+    "hollowareas": 5, "rockpocket": 6, "rust": 7, "spalling": 8, "washouts/concrete corrosion": 9,
+    "weathering": 10, "wetspot": 11
 }
 
 def convert_dataset(base_dir, output_base):
@@ -81,6 +88,6 @@ def convert_dataset(base_dir, output_base):
 
 # 执行转换 (请确保 SOURCE 路径指向包含 train 和 val 的文件夹)
 SOURCE_DATASET = '/root/mamba-yolo26' 
-OUTPUT_DATASET = '/root/autodl-tmp/dacl10k' 
+OUTPUT_DATASET = '/root/autodl-tmp/dacl10k2' 
 
 convert_dataset(SOURCE_DATASET, OUTPUT_DATASET)

@@ -1,0 +1,17 @@
+# GPU 推理：PyPI 的 onnxruntime-gpu 1.18.x 按 **CUDA 11.8** 链接，需要
+#   libcublasLt.so.11、libcudart.so.11 等（与 PyTorch cu12 自带的 .so.12 不能互相替代）。
+# 若本机未装完整 CUDA 11，请用下面 NVIDIA pip 包补齐（与 cu12 可并存，SONAME 不同）。
+#
+# 使用前请先卸载 CPU 版，避免混装：
+#   pip uninstall -y onnxruntime onnxruntime-gpu
+#   pip install -r requirements-onnx-gpu-cudnn8.txt
+#
+# onnxruntime-gpu 1.19+ / 1.24+ 多为 CUDA 12 + cuDNN 9，与「仅 cuDNN 8」环境不兼容。
+onnxruntime-gpu==1.18.0
+nvidia-cublas-cu11>=11.11.3.6
+nvidia-cuda-runtime-cu11>=11.8.89
+nvidia-cufft-cu11>=10.9.0.58
+
+# onnxruntime-gpu 的 pip 依赖有时会顺带装上 NumPy 2.x，易触发 numpy.core.umath / ERR_IGNORE
+# 与 Ultralytics 不兼容。装完本文件后建议再执行：
+#   pip install -r requirements.txt

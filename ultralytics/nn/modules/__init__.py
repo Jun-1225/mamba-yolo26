@@ -75,6 +75,7 @@ from .conv import (
     LightConv,
     RepConv,
     SpatialAttention,
+    DWTDown,
 )
 from .head import (
     OBB,
@@ -189,5 +190,6 @@ __all__ = (
     "YOLOESegment",
     "YOLOESegment26",
     "v10Detect",
-    "SimpleStem", "VisionClueMerge", "VSSBlock", "XSSBlock","MambaMoEBlock","MoE_C3k2","ES_MOE"
+    "SimpleStem", "VisionClueMerge", "VSSBlock", "XSSBlock","MambaMoEBlock","MoE_C3k2","ES_MOE",
+    "DWTDown"
 )
